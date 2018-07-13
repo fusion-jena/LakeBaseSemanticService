@@ -1,0 +1,14 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@base <http://example.org/ontologies/suggestor/test/> .
+
+<http://www.example.org/ontologies/suggestor/test/> rdf:type owl:Ontology .
+
+<http://www.example.org/ontologies/suggestor/test/star> rdf:type owl:Class ;
+	rdfs:label "star"@en .
+<http://www.example.org/ontologies/suggestor/test/star_system> rdf:type owl:Class ;
+	rdfs:label "star system"@en .
+<http://www.example.org/ontologies/suggestor/test/main_sequence_star> rdf:type owl:Class ;
+	rdfs:label "main sequence star"@en .
+<http://www.example.org/ontologies/suggestor/test/sequence> rdf:type owl:Class ;
+	rdfs:label "sequence"@en .

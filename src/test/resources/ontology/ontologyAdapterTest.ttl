@@ -1,0 +1,97 @@
+@prefix : <http://example.org/ontologies/test#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@base <http://example.org/ontologies/test#> .
+
+<http://www.example.org/ontologies/adapter/test/> rdf:type owl:Ontology .
+
+:as_number					rdf:type			owl:AnnotationProperty .
+
+:contains					rdf:type			owl:ObjectProperty .
+
+:name_component				rdf:type			owl:ObjectProperty .
+
+:equals						rdf:type			owl:ObjectProperty .
+
+:number						rdf:type			owl:Class ;
+							rdfs:label			"Number"@en .
+
+:even_number				rdf:type			owl:Class ;
+							rdfs:subClassOf		:number ;
+							rdfs:label			"Even Number"@en .
+
+:odd_number					rdf:type			owl:Class ;
+							rdfs:subClassOf		:number ;
+							rdfs:label			"Odd Number"@en .
+
+:prime_number				rdf:type			owl:Class ;
+							rdfs:subClassOf		:number ;
+							rdfs:label			"Prime Number"@en .
+
+:one						rdf:type			:odd_number ,
+												owl:NamedIndividual ;
+							rdfs:label			"One"@en ,
+												"Eins"@de ;
+							:as_number			"1" .
+
+:two						rdf:type			:even_number ,
+												:prime_number ,
+												owl:NamedIndividual ;
+							rdfs:label			"Two"@en ;
+							:as_number			"2" .
+							
+:trey						rdf:type			:odd_number ,
+												:prime_number ,
+												owl:NamedIndividual ;
+							rdfs:label			"Trey"@en ;
+							:as_number			"3" .
+
+:four						rdf:type			:even_number ,
+												owl:NamedIndividual ;
+							rdfs:label			"Four"@en ;
+							:as_number			"4" .
+
+:divisible_by_two_number	rdf:type			owl:Class ;
+							owl:equivalentClass	:even_number ;
+							rdfs:label			"Divisible by Two Number"@en .
+							
+:eins						rdf:type			owl:NamedIndividual ;
+							owl:sameAs			:one ;
+							rdfs:label			"Eins"@de .
+
+:zwei						rdf:type			owl:NamedIndividual ;
+							owl:sameAs			:two ;
+							rdfs:label			"Zwei"@de .
+
+:drei						rdf:type			owl:NamedIndividual ;
+							owl:sameAs			:trey ;
+							rdfs:label			"Drei"@de .
+
+:vier						rdf:type			owl:NamedIndividual ;
+							owl:sameAs			:four ;
+							rdfs:label			"Vier"@de .
+
+:one_earth					rdf:type			owl:NamedIndividual ;
+							:name_component		:one ;
+							rdfs:label			"One Earth"@en .
+
+:two_feet					rdf:type			owl:NamedIndividual ;
+							:name_component		:two ;
+							rdfs:label			"Two Feet"@en .
+
+:four_seasons				rdf:type			owl:NamedIndividual ;
+							:name_component		:four ;
+							rdfs:label			"Four Seasons"@en .
+
+:one_or_two					rdf:type			owl:NamedIndividual ;
+							:contains			:one ,
+												:two ;
+							rdfs:label			"One or Two"@en .
+
+:one_plus_one				rdf:type			owl:NamedIndividual ;
+							:equals				:two ;
+							rdfs:label			"One plus One"@en .
+
+:removed					owl:deprecated		"true"^^xsd:boolean ;
+							:replacedBy			:added .

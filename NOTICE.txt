@@ -1,0 +1,1 @@
+The development of the LakeBase Semantic Service was funded by DFG in the scope of the LakeBase project within the Scientific Library Services and Information Systems (LIS) program.

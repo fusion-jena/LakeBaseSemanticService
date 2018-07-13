@@ -1,0 +1,8 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@base <http://example.org/ontologies/suggestor/unit/test/> .
+
+<http://www.example.org/ontologies/suggestor/unit/test/> rdf:type owl:Ontology .
+
+<http://www.example.org/ontologies/suggestor/unit/test/kilogram> rdf:type owl:Class ;
+	rdfs:label "kilogram"@en .

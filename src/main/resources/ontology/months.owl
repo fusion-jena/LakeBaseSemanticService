@@ -1,0 +1,172 @@
+@prefix : <http://fusion.cs.uni-jena.de/ontologies/lakebase/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+
+<http://fusion.cs.uni-jena.de/ontologies/lakebase/months>
+	rdf:type owl:Ontology ;
+	rdfs:label "Months" ;
+	dcterms:creator <http://orcid.org/0000-0002-7733-0193> ;
+	dcterms:license <http://creativecommons.org/licenses/by/4.0/> .
+
+:January
+	rdf:type owl:Class ;
+	rdfs:subClassOf time:DateTimeDescription ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:unitType ;
+			owl:hasValue time:unitMonth
+		] ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:month ;
+			owl:hasValue 1
+		] ;
+	rdfs:label "Januar"@de ,
+		"January"@en .
+
+:February
+	rdf:type owl:Class ;
+	rdfs:subClassOf time:DateTimeDescription ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:unitType ;
+			owl:hasValue time:unitMonth
+		] ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:month ;
+			owl:hasValue 2
+		] ;
+	rdfs:label "Februar"@de ,
+		"February"@en .
+
+:March
+	rdf:type owl:Class ;
+	rdfs:subClassOf time:DateTimeDescription ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:unitType ;
+			owl:hasValue time:unitMonth
+		] ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:month ;
+			owl:hasValue 3
+		] ;
+	rdfs:label "March"@en ,
+		"März"@de .
+
+:April
+	rdf:type owl:Class ;
+	rdfs:subClassOf time:DateTimeDescription ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:unitType ;
+			owl:hasValue time:unitMonth
+		] ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:month ;
+			owl:hasValue 4
+		] ;
+	rdfs:label "April"@de ,
+		"April"@en .
+
+:May rdf:type owl:Class ;
+	rdfs:subClassOf time:DateTimeDescription ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:unitType ;
+			owl:hasValue time:unitMonth
+		] ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:month ;
+			owl:hasValue 5
+		] ;
+	rdfs:label "Mai"@de ,
+	"May"@en .
+
+:June rdf:type owl:Class ;
+	rdfs:subClassOf time:DateTimeDescription ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:unitType ;
+			owl:hasValue time:unitMonth
+		] ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:month ;
+			owl:hasValue 6
+		] ;
+	rdfs:label "June"@en ,
+	"Juni"@de .
+
+:July rdf:type owl:Class ;
+	rdfs:subClassOf time:DateTimeDescription ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:unitType ;
+			owl:hasValue time:unitMonth
+		] ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:month ;
+			owl:hasValue 7
+		] ;
+	rdfs:label "Juli"@de ,
+	"July"@en .
+
+:August rdf:type owl:Class ;
+	rdfs:subClassOf time:DateTimeDescription ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:unitType ;
+			owl:hasValue time:unitMonth
+		] ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:month ;
+			owl:hasValue 8
+		] ;
+	rdfs:label "August"@de ,
+		"August"@en .
+
+:September rdf:type owl:Class ;
+	rdfs:subClassOf time:DateTimeDescription ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:unitType ;
+			owl:hasValue time:unitMonth
+		] ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:month ;
+			owl:hasValue 9
+		] ;
+	rdfs:label "September"@de ,
+		"September"@en .
+
+:October rdf:type owl:Class ;
+	rdfs:subClassOf time:DateTimeDescription ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:unitType ;
+			owl:hasValue time:unitMonth
+		] ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:month ;
+			owl:hasValue 10
+		] ;
+	rdfs:label "October"@en ,
+		"Oktober"@de .
+
+:November rdf:type owl:Class ;
+	rdfs:subClassOf time:DateTimeDescription ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:unitType ;
+			owl:hasValue time:unitMonth
+		] ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:month ;
+			owl:hasValue 11
+		] ;
+	rdfs:label "November"@de ,
+		"November"@en .
+
+:December rdf:type owl:Class ;
+	rdfs:subClassOf time:DateTimeDescription ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:unitType ;
+			owl:hasValue time:unitMonth
+		] ,
+		[	rdf:type owl:Restriction ;
+			owl:onProperty time:month ;
+			owl:hasValue 12
+		] ;
+	rdfs:label "December"@en ,
+		"Dezember"@de .

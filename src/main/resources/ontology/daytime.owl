@@ -1,0 +1,184 @@
+@prefix : <http://fusion.cs.uni-jena.de/ontologies/lakebase/> .
+@prefix daytime: <daytime:> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+
+<http://fusion.cs.uni-jena.de/ontologies/lakebase/daytime> rdf:type owl:Ontology ;
+                                                           dct:license <http://creativecommons.org/licenses/by/4.0/> ;
+                                                           rdfs:label "Daytime" ;
+                                                           dct:creator <http://orcid.org/0000-0002-7733-0193> .
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://fusion.cs.uni-jena.de/ontologies/lakebase/Afternoon
+:Afternoon rdf:type owl:Class ;
+           rdfs:subClassOf time:DateTimeDescription ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty time:unitType ;
+                             owl:hasValue time:unitDay
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty time:hour ;
+                             owl:allValuesFrom [ rdf:type rdfs:Datatype ;
+                                                 owl:oneOf [ rdf:type rdf:List ;
+                                                             rdf:first 12 ;
+                                                             rdf:rest [ rdf:type rdf:List ;
+                                                                        rdf:first 13 ;
+                                                                        rdf:rest [ rdf:type rdf:List ;
+                                                                                   rdf:first 14 ;
+                                                                                   rdf:rest [ rdf:type rdf:List ;
+                                                                                              rdf:first 15 ;
+                                                                                              rdf:rest [ rdf:type rdf:List ;
+                                                                                                         rdf:first 16 ;
+                                                                                                         rdf:rest [ rdf:type rdf:List ;
+                                                                                                                    rdf:first 17 ;
+                                                                                                                    rdf:rest rdf:nil
+                                                                                                                  ]
+                                                                                                       ]
+                                                                                            ]
+                                                                                 ]
+                                                                      ]
+                                                           ]
+                                               ]
+                           ] ;
+           rdfs:label "Nachmittag"@de ,
+                      "afternoon"@en .
+
+
+###  http://fusion.cs.uni-jena.de/ontologies/lakebase/Evening
+:Evening rdf:type owl:Class ;
+         rdfs:subClassOf time:DateTimeDescription ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty time:unitType ;
+                           owl:hasValue time:unitDay
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty time:hour ;
+                           owl:allValuesFrom [ rdf:type rdfs:Datatype ;
+                                               owl:oneOf [ rdf:type rdf:List ;
+                                                           rdf:first 18 ;
+                                                           rdf:rest [ rdf:type rdf:List ;
+                                                                      rdf:first 19 ;
+                                                                      rdf:rest [ rdf:type rdf:List ;
+                                                                                 rdf:first 20 ;
+                                                                                 rdf:rest [ rdf:type rdf:List ;
+                                                                                            rdf:first 21 ;
+                                                                                            rdf:rest [ rdf:type rdf:List ;
+                                                                                                       rdf:first 22 ;
+                                                                                                       rdf:rest [ rdf:type rdf:List ;
+                                                                                                                  rdf:first 23 ;
+                                                                                                                  rdf:rest rdf:nil
+                                                                                                                ]
+                                                                                                     ]
+                                                                                          ]
+                                                                               ]
+                                                                    ]
+                                                         ]
+                                             ]
+                         ] ;
+         rdfs:label "Abend"@de ,
+                    "evening"@en .
+
+
+###  http://fusion.cs.uni-jena.de/ontologies/lakebase/Morning
+:Morning rdf:type owl:Class ;
+         rdfs:subClassOf time:DateTimeDescription ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty time:unitType ;
+                           owl:hasValue time:unitDay
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty time:hour ;
+                           owl:allValuesFrom [ rdf:type rdfs:Datatype ;
+                                               owl:oneOf [ rdf:type rdf:List ;
+                                                           rdf:first 10 ;
+                                                           rdf:rest [ rdf:type rdf:List ;
+                                                                      rdf:first 11 ;
+                                                                      rdf:rest [ rdf:type rdf:List ;
+                                                                                 rdf:first 6 ;
+                                                                                 rdf:rest [ rdf:type rdf:List ;
+                                                                                            rdf:first 7 ;
+                                                                                            rdf:rest [ rdf:type rdf:List ;
+                                                                                                       rdf:first 8 ;
+                                                                                                       rdf:rest [ rdf:type rdf:List ;
+                                                                                                                  rdf:first 9 ;
+                                                                                                                  rdf:rest rdf:nil
+                                                                                                                ]
+                                                                                                     ]
+                                                                                          ]
+                                                                               ]
+                                                                    ]
+                                                         ]
+                                             ]
+                         ] ;
+         rdfs:label "Morgen"@de ,
+                    "Vormittag"@de ,
+                    "forenoon"@en ,
+                    "morning"@en .
+
+
+###  http://fusion.cs.uni-jena.de/ontologies/lakebase/Night
+:Night rdf:type owl:Class ;
+       rdfs:subClassOf time:DateTimeDescription ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty time:unitType ;
+                         owl:hasValue time:unitDay
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty time:hour ;
+                         owl:allValuesFrom [ rdf:type rdfs:Datatype ;
+                                             owl:oneOf [ rdf:type rdf:List ;
+                                                         rdf:first 0 ;
+                                                         rdf:rest [ rdf:type rdf:List ;
+                                                                    rdf:first 1 ;
+                                                                    rdf:rest [ rdf:type rdf:List ;
+                                                                               rdf:first 2 ;
+                                                                               rdf:rest [ rdf:type rdf:List ;
+                                                                                          rdf:first 3 ;
+                                                                                          rdf:rest [ rdf:type rdf:List ;
+                                                                                                     rdf:first 4 ;
+                                                                                                     rdf:rest [ rdf:type rdf:List ;
+                                                                                                                rdf:first 5 ;
+                                                                                                                rdf:rest rdf:nil
+                                                                                                              ]
+                                                                                                   ]
+                                                                                        ]
+                                                                             ]
+                                                                  ]
+                                                       ]
+                                           ]
+                       ] ;
+       rdfs:label "Nacht"@de ,
+                  "night"@en .
+
+daytime:H00 dcterms:isPartOf :Night .
+daytime:H01 dcterms:isPartOf :Night .
+daytime:H02 dcterms:isPartOf :Night .
+daytime:H03 dcterms:isPartOf :Night .
+daytime:H04 dcterms:isPartOf :Night .
+daytime:H05 dcterms:isPartOf :Night .
+daytime:H06 dcterms:isPartOf :Morning .
+daytime:H07 dcterms:isPartOf :Morning .
+daytime:H08 dcterms:isPartOf :Morning .
+daytime:H09 dcterms:isPartOf :Morning .
+daytime:H10 dcterms:isPartOf :Morning .
+daytime:H11 dcterms:isPartOf :Morning .
+daytime:H12 dcterms:isPartOf :Afternoon .
+daytime:H13 dcterms:isPartOf :Afternoon .
+daytime:H14 dcterms:isPartOf :Afternoon .
+daytime:H15 dcterms:isPartOf :Afternoon .
+daytime:H16 dcterms:isPartOf :Afternoon .
+daytime:H17 dcterms:isPartOf :Afternoon .
+daytime:H18 dcterms:isPartOf :Evening .
+daytime:H19 dcterms:isPartOf :Evening .
+daytime:H20 dcterms:isPartOf :Evening .
+daytime:H21 dcterms:isPartOf :Evening .
+daytime:H22 dcterms:isPartOf :Evening .
+daytime:H23 dcterms:isPartOf :Evening .

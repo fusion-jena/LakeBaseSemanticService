@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<!--
+  #%L
+  LakeBase Semantic Service
+  %%
+  Copyright (C) 2018 Heinz Nixdorf Chair for Distributed Information Systems, Friedrich Schiller University Jena
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+<html>
+	<head>
+		<title>LakeBase Semantic Service is running</title>
+		<style>
+			input[type="text"],textarea{width:20em;}
+			textarea{height:20em;}
+			div{background:#eee;margin:1ex 0;padding:0 1ex;}
+			pre{background:#ddd;padding:1ex;}
+			td{vertical-align:top;}
+			td > *{margin:1ex 0;font-size:10pt;}</style>
+		</style>
+	</head>
+	<body>
+		<h1>LakeBase Semantic Service is running</h1>
+
+		<div>
+			<h2>Suggest Annotation</h2>
+			<form action="annotation/suggest" method="post">
+				<table>
+					<tr>
+						<th>Parameter</th>
+						<th></th>
+						<th>Syntax</th>
+						<th>Example</th>
+					</tr>
+					<tr>
+						<td>Scope</td>
+						<td><input type="text" name="s"></td>
+						<td><pre><code>all | biology | chemistry | datetime | location | species | unit</code></pre></td>
+						<td><pre><code>all</code></pre></td>
+					</tr>
+					<tr>
+						<td>Query</td>
+						<td><textarea name="q"></textarea></td>
+						<td><pre><pre><code>String</code></pre></td>
+						<td><pre><code>Since 1983, the metre has been officially
+defined as the length of the path travelled
+by light in a vacuum during a time interval
+of 1/299,792,458 of a second.</code></pre></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><input type="submit" value="Run"></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+		
+		<div>
+			<h2>Complete</h2>
+			<form action="complete" method="post">
+				<table>
+					<tr>
+						<th>Parameter</th>
+						<th></th>
+						<th>Syntax</th>
+						<th>Example</th>
+					</tr>
+					<tr>
+						<td>Scope</td>
+						<td><input type="text" name="s"></td>
+						<td><pre><code>all | biology | chemistry | datetime | location | species | unit</code></pre></td>
+						<td><pre><code>all</code></pre></td>
+					</tr>
+					<tr>
+						<td>Query</td>
+						<td><textarea name="q"></textarea></td>
+						<td><pre><code>String</code></pre></td>
+						<td><pre><code>millim</code></pre></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><input type="submit" value="Run"></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+		
+		<div>
+			<h2>Describe</h2>
+			<form action="describe" method="post">
+				<table>
+					<tr>
+						<th></th>
+						<th>Syntax</th>
+						<th>Example</th>
+					</tr>
+					<tr>
+						<td><textarea name="q"></textarea></td>
+						<td><pre><code>[
+  String, // IRI
+  // further IRIs
+]</code></pre></td>
+						<td><pre><code>[
+  "http://www.ontology-of-units-of-measure.org/resource/om-2/metre",
+  "http://www.ontology-of-units-of-measure.org/resource/om-2/Area",
+  "http://purl.obolibrary.org/obo/ENVO_01000596"
+]</code></pre></td>
+					</tr>
+					<tr>
+						<td><input type="submit" value="Run"></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+		
+		<div>
+			<h2>Set Annotation</h2>
+			<form action="annotation/set" method="post">
+				<table>
+					<tr>
+						<th></th>
+						<th>Syntax</th>
+						<th>Example</th>
+					</tr>
+					<tr>
+						<td><textarea name="q"></textarea></td>
+						<td><pre><code>[
+  {
+    "text": String,
+    "scopes": [ // optional
+      String,
+      // further scopes
+    ],
+    "entities": [
+      {
+        // packageID of the requested entity
+        "package": Number,
+        // objectID of the requested entity, optional		
+        "object": Number,
+        // columnID of the requested entity, optional
+        "column": Number,
+        // rowID of the requested entity, optional
+        "row": Number,
+        // metaID of the requested entity, optional
+        "meta": Number
+      },
+      // further entities
+    ],
+    "accepted": [ // optional
+      {
+        // term unique in context of this entity
+        "term": String,
+        "iri": String
+      },
+      // further accepted annotations
+    ],
+    "rejected": [ // optional
+      {
+        "term": String,
+        "iri": String
+      },
+      // further rejected annotations
+    ]
+  },
+  // further text annotations
+]</code></pre></td>
+						<td><pre><code>[
+  {
+    "text":"One meter is equal to 100 centimeter.",
+    "entities":[
+      {
+        "package":1
+      }
+    ]
+  },
+  {
+    "text":"One meter is equal to 100 centimeter.",
+    "entities":[
+      {
+        "package":2
+      }
+    ],
+    "accepted":[
+      {
+        "term":"meter",
+        "iri":"http://www.ontology-of-units-of-measure.org/resource/om-2/metre"
+      }
+    ]
+  },
+  {
+    "text":"One meter is equal to 100 centimeter.",
+    "entities":[
+      {
+        "package":3
+      }
+    ],
+    "rejected":[
+      {
+        "term":"meter",
+        "iri":"http://purl.obolibrary.org/obo/ENVO_01001008"
+      }
+    ]
+  }
+]</code></pre></td>
+					</tr>
+					<tr>
+						<td><input type="submit" value="Run"></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+		
+		<div>
+			<h2>Get Annotation</h2>
+			<form action="annotation/get" method="post">
+				<table>
+					<tr>
+						<th></th>
+						<th>Syntax</th>
+						<th>Example</th>
+					</tr>
+					<tr>
+						<td><textarea name="q"></textarea></td>
+						<td><pre><code>[
+  {
+    // packageID of the requested entity
+    "package": Number,
+    // objectID of the requested entity, optional
+    "object": Number,
+    // columnID of the requested entity, optional
+    "column": Number,
+    // rowID of the requested entity, optional
+    "row": Number,
+    // metaID of the requested entity, optional
+    "meta": Number
+  }
+  // further entities
+]</code></pre></td>
+						<td><pre><code>[
+  {
+    "package": 1
+  },
+  {
+    "package": 2
+  },
+  {
+    "package": 3
+  }
+]</code></pre></td>
+					</tr>
+					<tr>
+						<td><input type="submit" value="Run"></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+		
+		<div>
+			<h2>Copy Annotation</h2>
+			<form action="annotation/copy" method="post">
+				<table>
+					<tr>
+						<th></th>
+						<th>Syntax</th>
+						<th>Example</th>
+					</tr>
+					<tr>
+						<td><textarea name="q"></textarea></td>
+						<td><pre><code>{
+  "source": {
+      // packageID of the source entity
+      "package": Number,
+      // objectID of the source entity, optional
+      "object": Number,
+      // columnID of the source entity, optional
+      "column": Number,
+      // rowID of the source entity, optional
+      "row": Number,
+      // metaID of the source entity, optional
+      "meta": Number
+  },
+  "target": {
+      // packageID of the target entity
+      "package": Number,
+      // objectID of the target entity, optional
+      "object": Number,
+      // columnID of the target entity, optional
+      "column": Number,
+      // rowID of the requested target, optional
+      "row": Number,
+      // metaID of the requested target, optional
+      "meta": Number
+  }
+}</code></pre></td>
+						<td><pre><code>{
+  "source":{
+    "package":3
+  },
+  "target":{
+    "package":4
+  }
+}</code></pre></td>
+					</tr>
+					<tr>
+						<td><input type="submit" value="Run"></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+		
+		<div>
+			<h2>Search</h2>
+			<form action="search" method="post">
+				<table>
+					<tr>
+						<th></th>
+						<th>Syntax</th>
+						<th>Example</th>
+					</tr>
+					<tr>
+						<td><textarea name="q"></textarea></td>
+						<td><pre><code>{
+  "include": {
+    "text": String,
+    "accepted": [ // optional
+      {
+        // is unique in context of this entity
+        "term": String,
+        "iri": String
+      }
+      // further accepted annotations
+    ],
+    "rejected": [ // optional
+      {
+        "term": String,
+        "iri": String
+      }
+      // further rejected annotations
+    ]
+  },
+  "exclude": { // optional
+    "text": String,
+    "accepted": [ // optional
+      {
+        // is unique in context of this entity
+        "term": String,
+        "iri": String
+      }
+      // further accepted annotations
+    ],
+    "rejected": [ // optional
+      {
+        "term": String,
+        "iri": String
+      }
+      // further rejected annotations
+    ]
+  },
+  "entity": { // entity to search inside, optional
+    // packageID of the target entity
+    "package": Number,
+    // objectID of the target entity, optional
+    "object": Number,
+    // columnID of the target entity, optional
+    "column": Number,
+    // rowID of the requested target, optional
+    "row": Number,
+    // metaID of the requested target, optional
+    "meta": Number
+  }
+}</code></pre></td>
+						<td><pre><code>{
+  "include": {
+    "text": "centimetre"
+  },
+  "exclude": {
+    "text": "metre"
+  }
+}</code></pre></td>
+					</tr>
+					<tr>
+						<td><input type="submit" value="Run"></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+		
+		<div>
+			<h2>Delete Annotation</h2>
+			<form action="annotation/delete" method="post">
+				<table>
+					<tr>
+						<th></th>
+						<th>Syntax</th>
+						<th>Example</th>
+					</tr>
+					<tr>
+						<td><textarea name="q"></textarea></td>
+						<td><pre><code>[
+  {
+    // packageID of the target entity
+    "package": Number,
+    // objectID of the target entity, optional
+    "object": Number,
+    // columnID of the target entity, optional
+    "column": Number,
+    // rowID of the requested target, optional
+    "row": Number,
+    // metaID of the requested target, optional
+    "meta": Number
+  },
+  // further entities
+]</code></pre></td>
+						<td><pre><code>[
+  {
+    "package": 1
+  },
+  {
+    "package": 2
+  },
+  {
+    "package": 3
+  },
+  {
+    "package": 4
+  }
+]</code></pre></td>
+					</tr>
+					<tr>
+						<td><input type="submit" value="Run"></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+		
+	</body>
+</html>
+
