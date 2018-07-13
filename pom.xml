@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>lakebase.semantic.service</groupId>
 	<artifactId>lakebase.semantic.service</artifactId>
-	<version>0.3.5</version>
+	<version>0.3.6-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>LakeBase Semantic Service</name>
 	<organization>
