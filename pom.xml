@@ -2,15 +2,20 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>lakebase.semantic.service</groupId>
+
+	<groupId>de.uni_jena.cs.fusion</groupId>
 	<artifactId>lakebase.semantic.service</artifactId>
 	<version>0.3.6-SNAPSHOT</version>
 	<packaging>war</packaging>
+
 	<name>LakeBase Semantic Service</name>
+	<inceptionYear>2018</inceptionYear>
+
 	<organization>
 		<name>Heinz Nixdorf Chair for Distributed Information Systems, Friedrich Schiller University Jena</name>
 		<url>http://fusion.cs.uni-jena.de/</url>
 	</organization>
+
 	<developers>
 		<developer>
 			<id>jmkeil</id>
@@ -18,15 +23,15 @@
 			<email>jan-martin.keil@uni-jena.de</email>
 		</developer>
 	</developers>
-	<inceptionYear>2018</inceptionYear>
+
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
 			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
 			<distribution>repo</distribution>
-			<comments>A business-friendly OSS license</comments>
 		</license>
 	</licenses>
+
 	<build>
 		<plugins>
 			<plugin>
