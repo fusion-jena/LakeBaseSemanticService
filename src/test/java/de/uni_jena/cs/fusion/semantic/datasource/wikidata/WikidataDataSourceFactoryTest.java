@@ -116,8 +116,6 @@ public class WikidataDataSourceFactoryTest {
 		SparqlDataSource adapter = WikidataDataSourceFactory.root("wd:Q23397").narrowerProperty("^wdt:P279")
 				.narrowerProperty("^wdt:P31").build();
 
-		assertTrue(adapter.getNarrowers(IRI.create("http://www.wikidata.org/entity/Q3215290"))
-				.contains(IRI.create("http://www.wikidata.org/entity/Q131681")));
 		assertTrue(adapter.getAllNarrowers(IRI.create("http://www.wikidata.org/entity/Q23397"))
 				.contains(IRI.create("http://www.wikidata.org/entity/Q131681")));
 	}
