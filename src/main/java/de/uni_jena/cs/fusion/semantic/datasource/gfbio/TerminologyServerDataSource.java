@@ -69,7 +69,7 @@ import de.uni_jena.cs.fusion.semantic.datasource.SemanticDataSourceProvidingAllB
 import de.uni_jena.cs.fusion.semantic.datasource.SemanticDataSourceProvidingAllNarrowersUsingNarrowers;
 import de.uni_jena.cs.fusion.semantic.datasource.SemanticDataSourceProvidingBroadersUsingAllBroaders;
 import de.uni_jena.cs.fusion.semantic.datasource.SemanticDataSourceProvidingNarrowersUsingAllNarrowers;
-import de.uni_jena.cs.fusion.similarity.TrieJaroWinklerSimilarityMatcher;
+import de.uni_jena.cs.fusion.similarity.jarowinkler.JaroWinklerSimilarity;
 import de.uni_jena.cs.fusion.util.maintainer.Maintainable;
 import de.uni_jena.cs.fusion.util.maintainer.MaintenanceException;
 import de.uni_jena.cs.fusion.util.stopwords.StopWords;
@@ -446,14 +446,14 @@ public class TerminologyServerDataSource implements SemanticDataSourceProvidingA
 						// get iri
 						IRI iri = IRI.create(r.uri);
 						// get rating
-						double rating;
+						Double rating;
 						if (searchMode == MatchType.exact) {
 							rating = 1.0;
 						} else {
-							rating = TrieJaroWinklerSimilarityMatcher.match(term, r.label);
+							rating = JaroWinklerSimilarity.of(term, r.label, this.matchThreshold);
 						}
 
-						if (rating >= this.matchThreshold) {
+						if (Objects.nonNull(rating)) {
 							// add to match
 							match.put(iri, rating);
 							// add to label cache

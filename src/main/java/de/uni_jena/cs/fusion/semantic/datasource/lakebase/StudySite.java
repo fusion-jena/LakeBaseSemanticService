@@ -53,13 +53,10 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.uni_jena.cs.fusion.collection.LinkedListTrieMap;
-import de.uni_jena.cs.fusion.collection.TrieMap;
 import de.uni_jena.cs.fusion.lakebase.Scope;
 import de.uni_jena.cs.fusion.semantic.datasource.SemanticDataSourceException;
 import de.uni_jena.cs.fusion.semantic.datasource.SemanticDataSourceProvidingAllBroadersUsingBroaders;
-import de.uni_jena.cs.fusion.similarity.JaroWinklerSimilarityMatcher;
-import de.uni_jena.cs.fusion.similarity.TrieJaroWinklerSimilarityMatcher;
+import de.uni_jena.cs.fusion.similarity.jarowinkler.JaroWinklerSimilarity;
 import de.uni_jena.cs.fusion.util.maintainer.Maintainable;
 import de.uni_jena.cs.fusion.util.maintainer.MaintenanceException;
 
@@ -74,7 +71,7 @@ public class StudySite implements SemanticDataSourceProvidingAllBroadersUsingBro
 
 	private final DataSource datasource;
 
-	private JaroWinklerSimilarityMatcher<Set<IRI>> matcher;
+	private JaroWinklerSimilarity<Set<IRI>> matcher;
 	private double matchThreshold = 0.95;
 
 	public StudySite(DataSource datasource) throws SemanticDataSourceException {
@@ -196,7 +193,7 @@ public class StudySite implements SemanticDataSourceProvidingAllBroadersUsingBro
 	public Map<IRI, Double> getMatches(String term) {
 		term = term.toLowerCase();
 		Map<IRI, Double> result = new HashMap<IRI, Double>();
-		Map<Set<IRI>, Double> match = this.matcher.match(this.matchThreshold, term);
+		Map<Set<IRI>, Double> match = this.matcher.apply(term);
 		for (Set<IRI> iris : match.keySet()) {
 			for (IRI iri : iris) {
 				result.put(iri, match.get(iris));
@@ -323,7 +320,7 @@ public class StudySite implements SemanticDataSourceProvidingAllBroadersUsingBro
 
 	private void refreshMatcher() throws SemanticDataSourceException {
 		// initialize matcher
-		TrieMap<Set<IRI>> index = new LinkedListTrieMap<Set<IRI>>();
+		Map<String, Set<IRI>> index = new HashMap<>();
 		for (IRI iri : this.getSignature()) {
 			for (String label : this.getLabels(iri)) {
 				String caseInsensitiveLabel = label.toLowerCase();
@@ -336,12 +333,13 @@ public class StudySite implements SemanticDataSourceProvidingAllBroadersUsingBro
 				index.get(caseInsensitiveLabel).add(iri);
 			}
 		}
-		this.matcher = new TrieJaroWinklerSimilarityMatcher<Set<IRI>>(index);
+		this.matcher = JaroWinklerSimilarity.with(index, this.matchThreshold);
 	}
 
 	@Override
 	public void setMatchThreshold(double threshold) {
 		this.matchThreshold = threshold;
+		this.matcher.setThreshold(threshold);
 	}
 
 	private Record studySite(IRI iri) throws SemanticDataSourceException {

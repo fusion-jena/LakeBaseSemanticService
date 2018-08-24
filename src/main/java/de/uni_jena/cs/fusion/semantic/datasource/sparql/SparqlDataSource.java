@@ -30,7 +30,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecutionFactory;
@@ -42,14 +45,10 @@ import org.semanticweb.owlapi.model.IRI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uni_jena.cs.fusion.collection.LinkedListTrieMap;
-import de.uni_jena.cs.fusion.collection.Trie;
-import de.uni_jena.cs.fusion.collection.TrieMap;
 import de.uni_jena.cs.fusion.semantic.datasource.SemanticDataSourceException;
 import de.uni_jena.cs.fusion.semantic.datasource.SemanticDataSourceProvidingAllBroadersUsingBroaders;
 import de.uni_jena.cs.fusion.semantic.datasource.SemanticDataSourceProvidingAllNarrowersUsingNarrowers;
-import de.uni_jena.cs.fusion.similarity.JaroWinklerSimilarityMatcher;
-import de.uni_jena.cs.fusion.similarity.TrieJaroWinklerSimilarityMatcher;
+import de.uni_jena.cs.fusion.similarity.jarowinkler.JaroWinklerSimilarity;
 import de.uni_jena.cs.fusion.util.irifactory.IRIFactory;
 import de.uni_jena.cs.fusion.util.maintainer.Maintainable;
 import de.uni_jena.cs.fusion.util.maintainer.MaintenanceException;
@@ -71,9 +70,9 @@ public class SparqlDataSource implements Maintainable, SemanticDataSourceProvidi
 	private boolean initilized;
 
 	private Collection<IRI> iris = new HashSet<IRI>();
-	private TrieMap<Set<IRI>> labelIndex;
+	private NavigableMap<String, Set<IRI>> labelIndex;
 	private Map<IRI, Collection<String>> labels = new HashMap<IRI, Collection<String>>();
-	private JaroWinklerSimilarityMatcher<Set<IRI>> matcher;
+	private JaroWinklerSimilarity<Set<IRI>> matcher;
 	private double matchThreshold = 0.95;
 	Collection<String> namespaces = new HashSet<String>();
 	private Map<IRI, Collection<IRI>> narrowers = new HashMap<IRI, Collection<IRI>>();
@@ -119,7 +118,7 @@ public class SparqlDataSource implements Maintainable, SemanticDataSourceProvidi
 	public Map<IRI, Double> getMatches(String term) {
 		term = term.toLowerCase();
 		Map<IRI, Double> result = new HashMap<IRI, Double>();
-		Map<Set<IRI>, Double> match = this.matcher.match(this.matchThreshold, term);
+		Map<Set<IRI>, Double> match = this.matcher.apply(term);
 		for (Set<IRI> iris : match.keySet()) {
 			for (IRI iri : iris) {
 				result.put(iri, match.get(iris));
@@ -155,15 +154,15 @@ public class SparqlDataSource implements Maintainable, SemanticDataSourceProvidi
 
 	@Override
 	public Map<IRI, String> getSuggestions(String stump) throws SemanticDataSourceException {
-		Map<IRI, String> result = new HashMap<IRI, String>();
-		Trie<Set<IRI>> suggestionTrie = this.labelIndex.getSubTrie(stump.toLowerCase());
-		if (suggestionTrie != null) {
-			Iterator<? extends Trie<Set<IRI>>> suggestionIterator = suggestionTrie.populatedNodeIterator();
-			for (int i = 0; i < 10 && suggestionIterator.hasNext(); i++) {
-				Trie<Set<IRI>> current = suggestionIterator.next();
-				for (IRI value : current.value()) {
-					result.put(value, current.key());
-				}
+		Map<IRI, String> result = new HashMap<>();
+		stump = stump.toLowerCase();
+		String bound = stump.substring(0, stump.length() - 1) + (char) (stump.charAt(stump.length() - 1) + 1);
+		Map<String, Set<IRI>> suggestionTrie = this.labelIndex.subMap(stump.toLowerCase(), bound);
+		Iterator<Entry<String, Set<IRI>>> suggestionIterator = suggestionTrie.entrySet().iterator();
+		for (int i = 0; i < 10 && suggestionIterator.hasNext(); i++) {
+			Entry<String, Set<IRI>> current = suggestionIterator.next();
+			for (IRI value : current.getValue()) {
+				result.put(value, current.getKey());
 			}
 		}
 		return result;
@@ -194,8 +193,8 @@ public class SparqlDataSource implements Maintainable, SemanticDataSourceProvidi
 		Map<IRI, Collection<IRI>> replacementsBackup = this.replacements;
 		Map<IRI, Collection<IRI>> synonymsBackup = this.synonyms;
 		Map<IRI, List<URL>> urlsBackup = this.urls;
-		TrieMap<Set<IRI>> labelIndexBackup = this.labelIndex;
-		JaroWinklerSimilarityMatcher<Set<IRI>> matcherBackup = this.matcher;
+		NavigableMap<String, Set<IRI>> labelIndexBackup = this.labelIndex;
+		JaroWinklerSimilarity<Set<IRI>> matcherBackup = this.matcher;
 
 		try (IRIFactory factory = new IRIFactory()) {
 
@@ -254,7 +253,7 @@ public class SparqlDataSource implements Maintainable, SemanticDataSourceProvidi
 			}
 
 			// preparing match and suggest
-			this.labelIndex = new LinkedListTrieMap<Set<IRI>>();
+			this.labelIndex = new TreeMap<String, Set<IRI>>();
 			for (IRI iri : this.getSignature()) {
 				for (String label : this.getLabels(iri)) {
 					String caseInsensitiveLabel = label.toLowerCase();
@@ -267,7 +266,7 @@ public class SparqlDataSource implements Maintainable, SemanticDataSourceProvidi
 					this.labelIndex.get(caseInsensitiveLabel).add(iri);
 				}
 			}
-			this.matcher = new TrieJaroWinklerSimilarityMatcher<Set<IRI>>(this.labelIndex);
+			this.matcher = JaroWinklerSimilarity.with(this.labelIndex, this.matchThreshold);
 
 			this.initilized = true;
 		} catch (Exception e) {
@@ -544,6 +543,7 @@ public class SparqlDataSource implements Maintainable, SemanticDataSourceProvidi
 	@Override
 	public void setMatchThreshold(double threshold) {
 		this.matchThreshold = threshold;
+		this.matcher.setThreshold(threshold);
 	}
 
 }

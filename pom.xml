@@ -194,5 +194,10 @@
 			<artifactId>httpclient-cache</artifactId>
 			<version>4.5.4</version>
 		</dependency>
+		<dependency>
+			<groupId>de.uni_jena.cs.fusion</groupId>
+			<artifactId>similarity.jarowinkler</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 </project>

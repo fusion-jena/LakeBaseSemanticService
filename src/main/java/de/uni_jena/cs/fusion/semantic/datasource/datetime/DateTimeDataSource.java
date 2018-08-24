@@ -42,12 +42,9 @@ import org.semanticweb.owlapi.model.IRI;
 
 import com.google.common.collect.Lists;
 
-import de.uni_jena.cs.fusion.collection.LinkedListTrieMap;
-import de.uni_jena.cs.fusion.collection.TrieMap;
 import de.uni_jena.cs.fusion.semantic.datasource.SemanticDataSource;
 import de.uni_jena.cs.fusion.semantic.datasource.SemanticDataSourceException;
-import de.uni_jena.cs.fusion.similarity.JaroWinklerSimilarityMatcher;
-import de.uni_jena.cs.fusion.similarity.TrieJaroWinklerSimilarityMatcher;
+import de.uni_jena.cs.fusion.similarity.jarowinkler.JaroWinklerSimilarity;
 
 /**
  * 
@@ -75,100 +72,99 @@ public class DateTimeDataSource implements SemanticDataSource {
 		}
 	}
 
-	private final static JaroWinklerSimilarityMatcher<Callable<DateTime>> KEYWORD_MATCHER;
+	private final static Map<String, Callable<DateTime>> KEYWORD_MAPPING = new HashMap<>();
 	static {
 		String[] lastSynonyms = { "last", "final", "recent", "past", "latter", "hindmost" };
 		String[] currentSynonyms = { "current", "this", "present", "ongoing", "actual" };
 		String[] nextSynonyms = { "next", "following", "subsequent", "succeeding", "ensuing", "tailing" };
 
-		TrieMap<Callable<DateTime>> keywordMapping = new LinkedListTrieMap<Callable<DateTime>>();
-		keywordMapping.put("now", () -> {
+		KEYWORD_MAPPING.put("now", () -> {
 			return new DateTime(LocalDateTime.now(), "uuuu-MM-dd'T'HH:mm:ssZZZZZ");
 		});
-		keywordMapping.put("today", () -> {
+		KEYWORD_MAPPING.put("today", () -> {
 			return new DateTime(LocalDate.now(), "uuuu-MM-dd");
 		});
-		keywordMapping.put("yesterday", () -> {
+		KEYWORD_MAPPING.put("yesterday", () -> {
 			return new DateTime(LocalDate.now().minus(1, ChronoUnit.DAYS), "uuuu-MM-dd");
 		});
-		keywordMapping.put("tomorrow", () -> {
+		KEYWORD_MAPPING.put("tomorrow", () -> {
 			return new DateTime(LocalDate.now().plus(1, ChronoUnit.DAYS), "uuuu-MM-dd");
 		});
-		keywordMapping.put("day before yesterday", () -> {
+		KEYWORD_MAPPING.put("day before yesterday", () -> {
 			return new DateTime(LocalDate.now().minus(2, ChronoUnit.DAYS), "uuuu-MM-dd");
 		});
-		keywordMapping.put("day after tomorrow", () -> {
+		KEYWORD_MAPPING.put("day after tomorrow", () -> {
 			return new DateTime(LocalDate.now().plus(2, ChronoUnit.DAYS), "uuuu-MM-dd");
 		});
 
 		for (String lastSynonym : lastSynonyms) {
-			keywordMapping.put(lastSynonym + " second", () -> {
+			KEYWORD_MAPPING.put(lastSynonym + " second", () -> {
 				return new DateTime(LocalDateTime.now().minus(1, ChronoUnit.SECONDS), "uuuu-MM-dd'T'HH:mm:ssZZZZZ");
 			});
-			keywordMapping.put(lastSynonym + " minute", () -> {
+			KEYWORD_MAPPING.put(lastSynonym + " minute", () -> {
 				return new DateTime(LocalDateTime.now().minus(1, ChronoUnit.MINUTES), "uuuu-MM-dd'T'HH:mmZZZZZ");
 			});
-			keywordMapping.put(lastSynonym + " hour", () -> {
+			KEYWORD_MAPPING.put(lastSynonym + " hour", () -> {
 				return new DateTime(LocalDateTime.now().minus(1, ChronoUnit.HOURS), "uuuu-MM-dd'T'HHZZZZZ");
 			});
-			keywordMapping.put(lastSynonym + " day", () -> {
+			KEYWORD_MAPPING.put(lastSynonym + " day", () -> {
 				return new DateTime(LocalDate.now().minusDays(1), "uuuu-MM-dd");
 			});
-			keywordMapping.put(lastSynonym + " week", () -> {
+			KEYWORD_MAPPING.put(lastSynonym + " week", () -> {
 				return new DateTime(LocalDate.now().minusWeeks(1), "YYYY-'W'ww");
 			});
-			keywordMapping.put(lastSynonym + " month", () -> {
+			KEYWORD_MAPPING.put(lastSynonym + " month", () -> {
 				return new DateTime(LocalDate.now().minusMonths(1), "uuuu-MM");
 			});
-			keywordMapping.put(lastSynonym + " year", () -> {
+			KEYWORD_MAPPING.put(lastSynonym + " year", () -> {
 				return new DateTime(Year.now().minusYears(1), "uuuu");
 			});
 		}
 
 		for (String currentSynonym : currentSynonyms) {
-			keywordMapping.put(currentSynonym + " second", () -> {
+			KEYWORD_MAPPING.put(currentSynonym + " second", () -> {
 				return new DateTime(LocalDateTime.now(), "uuuu-MM-dd'T'HH:mm:ssZZZZZ");
 			});
-			keywordMapping.put(currentSynonym + " minute", () -> {
+			KEYWORD_MAPPING.put(currentSynonym + " minute", () -> {
 				return new DateTime(LocalDateTime.now(), "uuuu-MM-dd'T'HH:mmZZZZZ");
 			});
-			keywordMapping.put(currentSynonym + " hour", () -> {
+			KEYWORD_MAPPING.put(currentSynonym + " hour", () -> {
 				return new DateTime(LocalDateTime.now(), "uuuu-MM-dd'T'HHZZZZZ");
 			});
-			keywordMapping.put(currentSynonym + " day", () -> {
+			KEYWORD_MAPPING.put(currentSynonym + " day", () -> {
 				return new DateTime(LocalDate.now(), "uuuu-MM-dd");
 			});
-			keywordMapping.put(currentSynonym + " week", () -> {
+			KEYWORD_MAPPING.put(currentSynonym + " week", () -> {
 				return new DateTime(LocalDate.now(), "YYYY-'W'ww");
 			});
-			keywordMapping.put(currentSynonym + " month", () -> {
+			KEYWORD_MAPPING.put(currentSynonym + " month", () -> {
 				return new DateTime(LocalDate.now(), "uuuu-MM");
 			});
-			keywordMapping.put(currentSynonym + " year", () -> {
+			KEYWORD_MAPPING.put(currentSynonym + " year", () -> {
 				return new DateTime(Year.now(), "uuuu");
 			});
 		}
 
 		for (String nextSynonym : nextSynonyms) {
-			keywordMapping.put(nextSynonym + " second", () -> {
+			KEYWORD_MAPPING.put(nextSynonym + " second", () -> {
 				return new DateTime(LocalDateTime.now().plus(1, ChronoUnit.SECONDS), "uuuu-MM-dd'T'HH:mm:ssZZZZZ");
 			});
-			keywordMapping.put(nextSynonym + " minute", () -> {
+			KEYWORD_MAPPING.put(nextSynonym + " minute", () -> {
 				return new DateTime(LocalDateTime.now().plus(1, ChronoUnit.MINUTES), "uuuu-MM-dd'T'HH:mm:ssZZZZZ");
 			});
-			keywordMapping.put(nextSynonym + " hour", () -> {
+			KEYWORD_MAPPING.put(nextSynonym + " hour", () -> {
 				return new DateTime(LocalDateTime.now().plus(1, ChronoUnit.HOURS), "uuuu-MM-dd'T'HH:mm:ssZZZZZ");
 			});
-			keywordMapping.put(nextSynonym + " day", () -> {
+			KEYWORD_MAPPING.put(nextSynonym + " day", () -> {
 				return new DateTime(LocalDate.now().plusDays(1), "uuuu-MM-dd");
 			});
-			keywordMapping.put(nextSynonym + " week", () -> {
+			KEYWORD_MAPPING.put(nextSynonym + " week", () -> {
 				return new DateTime(LocalDate.now().plusWeeks(1), "YYYY-'W'ww");
 			});
-			keywordMapping.put(nextSynonym + " month", () -> {
+			KEYWORD_MAPPING.put(nextSynonym + " month", () -> {
 				return new DateTime(LocalDate.now().plusMonths(1), "uuuu-MM");
 			});
-			keywordMapping.put(nextSynonym + " year", () -> {
+			KEYWORD_MAPPING.put(nextSynonym + " year", () -> {
 				return new DateTime(Year.now().plusYears(1), "uuuu");
 			});
 		}
@@ -176,12 +172,10 @@ public class DateTimeDataSource implements SemanticDataSource {
 		// TODO "last monday", "next december", ...
 
 		// TODO three days ago, ... (one ... twelfth)
-
-		KEYWORD_MATCHER = new TrieJaroWinklerSimilarityMatcher<Callable<DateTime>>(keywordMapping);
 	}
 
-	private double matchThreshold = 0.95;
-
+	private JaroWinklerSimilarity<Callable<DateTime>> keywordMatcher = JaroWinklerSimilarity.with(KEYWORD_MAPPING,
+			0.95);;
 	private final static String NAMESPACE = "datetime:dt";
 
 	// TODO update scope IRI
@@ -371,7 +365,7 @@ public class DateTimeDataSource implements SemanticDataSource {
 		if (dateTime.isPresent()) {
 			return Collections.singletonMap(getDateTimeIRI(dateTime.get()), 1.0);
 		} else {
-			Map<Callable<DateTime>, Double> matches = KEYWORD_MATCHER.match(matchThreshold, term);
+			Map<Callable<DateTime>, Double> matches = keywordMatcher.apply(term);
 			if (!matches.isEmpty()) {
 				Map<IRI, Double> result = new HashMap<IRI, Double>();
 				for (Map.Entry<Callable<DateTime>, Double> match : matches.entrySet()) {
@@ -438,6 +432,6 @@ public class DateTimeDataSource implements SemanticDataSource {
 
 	@Override
 	public void setMatchThreshold(double threshold) {
-		this.matchThreshold = threshold;
+		this.keywordMatcher.setThreshold(threshold);
 	}
 }

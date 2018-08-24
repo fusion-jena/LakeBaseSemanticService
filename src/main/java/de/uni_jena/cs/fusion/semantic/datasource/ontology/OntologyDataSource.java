@@ -32,8 +32,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.NavigableMap;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -65,14 +68,10 @@ import org.semanticweb.owlapi.search.EntitySearcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uni_jena.cs.fusion.collection.LinkedListTrieMap;
-import de.uni_jena.cs.fusion.collection.Trie;
-import de.uni_jena.cs.fusion.collection.TrieMap;
 import de.uni_jena.cs.fusion.semantic.datasource.SemanticDataSourceException;
 import de.uni_jena.cs.fusion.semantic.datasource.SemanticDataSourceProvidingAllBroadersUsingBroaders;
 import de.uni_jena.cs.fusion.semantic.datasource.SemanticDataSourceProvidingAllNarrowersUsingNarrowers;
-import de.uni_jena.cs.fusion.similarity.JaroWinklerSimilarityMatcher;
-import de.uni_jena.cs.fusion.similarity.TrieJaroWinklerSimilarityMatcher;
+import de.uni_jena.cs.fusion.similarity.jarowinkler.JaroWinklerSimilarity;
 import de.uni_jena.cs.fusion.util.maintainer.Maintainable;
 import de.uni_jena.cs.fusion.util.maintainer.MaintenanceException;
 
@@ -112,9 +111,8 @@ public class OntologyDataSource implements SemanticDataSourceProvidingAllBroader
 	Set<String> namespacesUnmodifiable = Collections.unmodifiableSet(namespaces);
 	Set<String> languages = new HashSet<String>();
 
-	TrieMap<Set<IRI>> labelIndex;
-	private double matchThreshold = 0.95;
-	JaroWinklerSimilarityMatcher<Set<IRI>> matcher;
+	NavigableMap<String, Set<IRI>> labelIndex;
+	JaroWinklerSimilarity<Set<IRI>> matcher;
 
 	/**
 	 * language filter
@@ -126,6 +124,8 @@ public class OntologyDataSource implements SemanticDataSourceProvidingAllBroader
 	Map<PropertySubject, List<OWLAnnotationProperty>> annotationProperties;
 	Map<PropertySubject, List<OWLObjectProperty>> objectProperties;
 	Map<PropertySubject, List<OWLDataProperty>> dataProperties;
+
+	private double matchThreshold = 0.95;
 
 	OntologyDataSource(OWLOntologyDocumentSource ontologySource) {
 		this.ontologySource = ontologySource;
@@ -203,7 +203,7 @@ public class OntologyDataSource implements SemanticDataSourceProvidingAllBroader
 				}
 
 				// initialize matcher
-				this.labelIndex = new LinkedListTrieMap<Set<IRI>>();
+				this.labelIndex = new TreeMap<String, Set<IRI>>();
 				for (IRI iri : this.getSignature()) {
 					for (String label : this.getLabels(iri)) {
 						String caseInsensitiveLabel = label.toLowerCase();
@@ -216,7 +216,7 @@ public class OntologyDataSource implements SemanticDataSourceProvidingAllBroader
 						this.labelIndex.get(caseInsensitiveLabel).add(iri);
 					}
 				}
-				this.matcher = new TrieJaroWinklerSimilarityMatcher<Set<IRI>>(this.labelIndex);
+				this.matcher = JaroWinklerSimilarity.with(this.labelIndex, this.matchThreshold);
 
 			} catch (OWLRuntimeException | OWLOntologyCreationException e) {
 				this.manager = owlManagerBackup;
@@ -276,7 +276,7 @@ public class OntologyDataSource implements SemanticDataSourceProvidingAllBroader
 				for (OWLObjectProperty objectProperty : this.objectProperties.get(PropertySubject.BROADER)) {
 					results.addAll(getObjectPropertyIris(individualEntity.get(), objectProperty, this.ontology));
 				}
-				
+
 				// iterate relevant inverse object properties
 				for (OWLObjectProperty objectProperty : this.objectProperties.get(PropertySubject.NARROWER)) {
 					results.addAll(getObjectPropertyInverseIris(individualEntity.get(), objectProperty, this.ontology));
@@ -331,7 +331,7 @@ public class OntologyDataSource implements SemanticDataSourceProvidingAllBroader
 		if (this.initialized) {
 			term = term.toLowerCase();
 			Map<IRI, Double> result = new HashMap<IRI, Double>();
-			Map<Set<IRI>, Double> match = this.matcher.match(this.matchThreshold, term);
+			Map<Set<IRI>, Double> match = this.matcher.apply(term);
 			for (Set<IRI> iris : match.keySet()) {
 				for (IRI iri : iris) {
 					result.put(iri, match.get(iris));
@@ -368,7 +368,7 @@ public class OntologyDataSource implements SemanticDataSourceProvidingAllBroader
 				for (OWLObjectProperty objectProperty : this.objectProperties.get(PropertySubject.NARROWER)) {
 					results.addAll(getObjectPropertyIris(individualEntity.get(), objectProperty, this.ontology));
 				}
-				
+
 				// iterate relevant inverse object properties
 				for (OWLObjectProperty objectProperty : this.objectProperties.get(PropertySubject.BROADER)) {
 					results.addAll(getObjectPropertyInverseIris(individualEntity.get(), objectProperty, this.ontology));
@@ -452,15 +452,15 @@ public class OntologyDataSource implements SemanticDataSourceProvidingAllBroader
 	@Override
 	public Map<IRI, String> getSuggestions(String stump) throws SemanticDataSourceException {
 		if (this.initialized) {
-			Map<IRI, String> result = new HashMap<IRI, String>();
-			Trie<Set<IRI>> suggestionTrie = this.labelIndex.getSubTrie(stump.toLowerCase());
-			if (suggestionTrie != null) {
-				Iterator<? extends Trie<Set<IRI>>> suggestionIterator = suggestionTrie.populatedNodeIterator();
-				for (int i = 0; i < 10 && suggestionIterator.hasNext(); i++) {
-					Trie<Set<IRI>> current = suggestionIterator.next();
-					for (IRI value : current.value()) {
-						result.put(value, current.key());
-					}
+			Map<IRI, String> result = new HashMap<>();
+			stump = stump.toLowerCase();
+			String bound = stump.substring(0, stump.length() - 1) + (char) (stump.charAt(stump.length() - 1) + 1);
+			Map<String, Set<IRI>> suggestionTrie = this.labelIndex.subMap(stump.toLowerCase(), bound);
+			Iterator<Entry<String, Set<IRI>>> suggestionIterator = suggestionTrie.entrySet().iterator();
+			for (int i = 0; i < 10 && suggestionIterator.hasNext(); i++) {
+				Entry<String, Set<IRI>> current = suggestionIterator.next();
+				for (IRI value : current.getValue()) {
+					result.put(value, current.getKey());
 				}
 			}
 			return result;
@@ -662,6 +662,7 @@ public class OntologyDataSource implements SemanticDataSourceProvidingAllBroader
 	@Override
 	public void setMatchThreshold(double threshold) {
 		this.matchThreshold = threshold;
+		this.matcher.setThreshold(threshold);
 	}
 
 	private ArrayList<IRI> getAnnotationPropertyIris(IRI iri, OWLAnnotationProperty annotationProperty,

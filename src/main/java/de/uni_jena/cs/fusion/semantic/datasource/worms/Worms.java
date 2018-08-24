@@ -44,7 +44,7 @@ import org.semanticweb.owlapi.model.IRI;
 
 import de.uni_jena.cs.fusion.semantic.datasource.SemanticDataSource;
 import de.uni_jena.cs.fusion.semantic.datasource.SemanticDataSourceException;
-import de.uni_jena.cs.fusion.similarity.TrieJaroWinklerSimilarityMatcher;
+import de.uni_jena.cs.fusion.similarity.jarowinkler.JaroWinklerSimilarity;
 import de.uni_jena.cs.fusion.worms.client.AphiaRecord;
 import de.uni_jena.cs.fusion.worms.client.Classification;
 import de.uni_jena.cs.fusion.worms.client.ExternalIdentifierSource;
@@ -261,15 +261,15 @@ public class Worms implements SemanticDataSource {
 
 			Iterator<String> termsIterator = termsList.iterator();
 			Iterator<Collection<AphiaRecord>> responsesIterator = responses.iterator();
-			Map<String, Map<IRI, Double>> matches = new HashMap<String, Map<IRI, Double>>();
+			Map<String, Map<IRI, Double>> matches = new HashMap<>();
 
 			while (termsIterator.hasNext() && responsesIterator.hasNext()) {
 				String term = termsIterator.next();
 				matches.put(term, responsesIterator.next().stream()
 						.filter(record -> (!record.status.equals("quarantined") && !record.status.equals("deleted")))
 						.map(record -> Collections.singletonMap(IRI.create(record.lsid),
-								TrieJaroWinklerSimilarityMatcher.match(term, record.scientificName)))
-						.filter(e -> e.values().iterator().next() >= this.matchThreshold)
+								JaroWinklerSimilarity.of(term, record.scientificName, this.matchThreshold)))
+						.filter(e -> Objects.nonNull(e.values().iterator().next()))
 						.flatMap(map -> map.entrySet().stream())
 						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
 			}
