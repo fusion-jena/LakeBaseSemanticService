@@ -142,7 +142,7 @@ public class Environment implements Closeable {
 		semanticDataSourceManager.registerAdapter(OntologyDataSourceFactory
 				.ontology(IRI.create("https://raw.githubusercontent.com/HajoRijgersberg/OM/master/om-2.0.rdf"))
 				.fallback(file("ontology/om-2.0.rdf")).reloading().scope(Scope.unit.getIris())
-				.scope(Scope.quantityKind.getIris()).language(languages).labelPropertyRdfsLabel()
+				.scope(Scope.quantityKind.getIris()).dereferencing().language(languages).labelPropertyRdfsLabel()
 				.descriptionPropertyRdfsComment()
 				.alternativLabelProperty("http://www.ontology-of-units-of-measure.org/resource/om-2/symbol")
 				.alternativLabelProperty("http://www.ontology-of-units-of-measure.org/resource/om-2/abbreviation")
