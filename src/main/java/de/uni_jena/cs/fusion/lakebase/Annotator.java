@@ -52,6 +52,10 @@ public class Annotator {
 	private final static String[] punctuations = { ",(?!\\d)", "\\.(?!\\d)", ";", "\\?", "!", "\"", "\\(", "\\)", "\\[",
 			"\\]", "\\{", "\\}" };
 	/**
+	 * punctuation character used to replace predefined terms
+	 */
+	private final static String replacer = ";";
+	/**
 	 * regular expression to split queries into parts to annotate
 	 */
 	public static final String punctuationRegEx = " *" + StringUtils.join(punctuations, " *| *") + " *";
@@ -104,7 +108,7 @@ public class Annotator {
 			determined.put(term, predefined.get(term));
 
 			// replace predefined term to avoid duplicated annotation
-			query.replaceAll("(^| )+" + term + "( |$)+", punctuations[0]);
+			query = query.replaceAll("(^| )+" + term + "( |$)+", replacer);
 		}
 
 		// get proposed annotations

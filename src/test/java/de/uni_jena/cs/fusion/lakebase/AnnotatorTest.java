@@ -88,6 +88,9 @@ public class AnnotatorTest {
 						IRI.create("http://www.example.org/ontologies/annotator/test/charlie")),
 				Collections.emptyMap(), Collections.singleton(Scope.all));
 		assertEquals(2, determined.keySet().size());
+		assertTrue(determined.containsKey("alfa bravo"));
+		assertEquals(IRI.create("http://www.example.org/ontologies/annotator/test/charlie"),
+				determined.get("alfa bravo"));
 		assertTrue(determined.containsKey("charlie"));
 		assertEquals(IRI.create("http://www.example.org/ontologies/annotator/test/charlie"), determined.get("charlie"));
 	}
