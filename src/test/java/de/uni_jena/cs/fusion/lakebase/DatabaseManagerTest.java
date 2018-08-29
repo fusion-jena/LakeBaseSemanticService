@@ -91,8 +91,8 @@ public class DatabaseManagerTest {
 		try (Connection connection = connectionPool.getConnection()) {
 			try {
 				connection.createStatement().execute("DROP SCHEMA semantic CASCADE;");
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (SQLException e) {
+				// probably schema does not exist: does not matter
 			}
 			connection.createStatement().execute("CREATE SCHEMA semantic;");
 		}
