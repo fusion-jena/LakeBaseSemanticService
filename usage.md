@@ -49,7 +49,7 @@ Response JSON:
 
     [
       {
-        "term": String, // annotatet term contained in the given text
+        "term": String, // annotated term contained in the given text
         "annotations": [
           {
             "iri": String,
@@ -97,7 +97,7 @@ Response JSON:
             "row": Number, // rowID of the requested entity
             "meta": Number // metaID of the requested entity
           },
-          // futher entities with same annotation
+          // further entities with same annotation
         ],
         "accepted": [
           {
@@ -168,7 +168,7 @@ Request JSON:
       // further text annotations
     ]
 
-Response: HTTP response status codes 204 on valid request, asynchron processing
+Response: HTTP response status codes 204 on valid request, asynchronous processing
 
 ## Copy Annotations
 
