@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -39,7 +40,6 @@ import org.semanticweb.owlapi.model.IRI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ListeningScheduledExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
@@ -96,7 +96,7 @@ public class Environment implements Closeable {
 
 		// filter some logging noise
 		System.setProperty("org.jooq.no-logo", "true");
-		List<String> noisyLoggerNames = Lists.newArrayList("org.apache.http.client.protocol.ResponseProcessCookies",
+		List<String> noisyLoggerNames = Arrays.asList("org.apache.http.client.protocol.ResponseProcessCookies",
 				"org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer");
 		for (String noisyLoggerName : noisyLoggerNames) {
 			java.util.logging.Logger noisyLogger = java.util.logging.Logger.getLogger(noisyLoggerName);

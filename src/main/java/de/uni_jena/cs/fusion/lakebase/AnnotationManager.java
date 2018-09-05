@@ -28,6 +28,7 @@ import static org.jooq.impl.DSL.val;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -46,8 +47,6 @@ import org.jooq.impl.DSL;
 import org.semanticweb.owlapi.model.IRI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 import de.uni_jena.cs.fusion.lakebase.model.Entity;
 import de.uni_jena.cs.fusion.lakebase.util.jooq.StringToIRIMapper;
@@ -469,7 +468,7 @@ public class AnnotationManager implements Maintainable {
 	private void copyAnnotation(DSLContext context, Entity source, Entity target) {
 		Collection<Condition> conditions = entityConditions(source.packageID, source.objectID, source.columnID,
 				source.rowID, source.metaID, true);
-		Collection<Field<Object>> into = Lists.newArrayList(field("package_id"), field("object_id"), field("column_id"),
+		Collection<Field<Object>> into = Arrays.asList(field("package_id"), field("object_id"), field("column_id"),
 				field("row_id"), field("meta_id"), field("concept_id"), field("term"));
 		Collection<Field<Object>> select = new LinkedList<Field<Object>>();
 
