@@ -114,10 +114,10 @@ public class WikidataDataSourceFactoryTest {
 	@Test
 	public void getNarrowers() throws SemanticDataSourceException {
 		SparqlDataSource adapter = WikidataDataSourceFactory.root("wd:Q23397").narrowerProperty("^wdt:P279")
-				.narrowerProperty("^wdt:P31").build();
+				.build();
 
 		assertTrue(adapter.getAllNarrowers(IRI.create("http://www.wikidata.org/entity/Q23397"))
-				.contains(IRI.create("http://www.wikidata.org/entity/Q131681")));
+				.contains(IRI.create("http://www.wikidata.org/entity/Q3215290")));
 	}
 
 	@Test

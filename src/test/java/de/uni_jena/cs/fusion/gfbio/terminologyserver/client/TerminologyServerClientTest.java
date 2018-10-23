@@ -136,10 +136,9 @@ public class TerminologyServerClientTest {
 	@Test
 	public void terminology() throws TerminologyServerClientException {
 		assertTrue(client.terminology("ENVO").results.stream().filter(t -> t.containsKey("acronym"))
-				.filter(t -> t.containsKey("contribution")).filter(t -> t.containsKey("creationDate"))
-				.filter(t -> t.containsKey("description")).filter(t -> t.containsKey("hasDlExpressivity"))
-				.filter(t -> t.containsKey("hasDomain")).filter(t -> t.containsKey("hasOntologyLanguage"))
-				.filter(t -> t.containsKey("name")).filter(t -> t.containsKey("storage"))
+				.filter(t -> t.containsKey("creationDate")).filter(t -> t.containsKey("description"))
+				.filter(t -> t.containsKey("hasDlExpressivity")).filter(t -> t.containsKey("hasDomain"))
+				.filter(t -> t.containsKey("hasOntologyLanguage")).filter(t -> t.containsKey("name"))
 				.filter(t -> t.containsKey("uri")).findAny().isPresent());
 	}
 
